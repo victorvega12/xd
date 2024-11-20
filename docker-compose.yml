@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  prestashop:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prestashop
+    environment:
+      PS_DOMAIN: ${RAILWAY_STATIC_URL}
+      DB_SERVER: db
+      DB_NAME: prestashop
+      DB_USER: root
+      DB_PASSWD: root_password
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: prestashop_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: prestashop
+      MYSQL_USER: prestashop
+      MYSQL_PASSWORD: prestashop_password
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
