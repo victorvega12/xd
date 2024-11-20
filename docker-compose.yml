@@ -2,30 +2,20 @@ version: '3.8'
 
 services:
   prestashop:
-    image: prestashop/prestashop:8.2
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: prestashop
     environment:
-      PS_DOMAIN: ${RAILWAY_STATIC_URL}   # Usar dominio proporcionado por Railway
-      PS_INSTALL_DB: 1
-      PS_HANDLE_DYNAMIC_DOMAIN: 1
-      PS_ENABLE_SSL: 0
-      PS_DEV_MODE: 1
-      PS_INSTALL_AUTO: 0
+      PS_DOMAIN: ${RAILWAY_STATIC_URL}
       DB_SERVER: db
       DB_NAME: prestashop
       DB_USER: root
       DB_PASSWD: root_password
-      PS_FOLDER_ADMIN: "admin"
-      PS_FOLDER_INSTALL: "install"
     ports:
-      - "8080:80"                        # No es necesario en Railway, pero útil localmente
-    volumes:
-      - ./modules:/var/www/html/modules
-      - ./themes:/var/www/html/themes
-      - ./override:/var/www/html/override
+      - "8080:80"
     depends_on:
       - db
-    restart: unless-stopped
 
   db:
     image: mysql:8.0
@@ -37,7 +27,6 @@ services:
       MYSQL_PASSWORD: prestashop_password
     volumes:
       - db_data:/var/lib/mysql
-    restart: unless-stopped
 
 volumes:
   db_data:
